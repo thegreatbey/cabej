@@ -366,16 +366,16 @@ export default function App() {
         )}
   
         {/* Main layout with book info on left and main content centered */}
-        <div className="relative">
+        <div className="relative min-h-screen">
           {/* Book info box - absolute positioning so it doesn't affect centering */}
-          <div className="absolute left-0 top-16 w-64 hidden md:block">
-            <div className="border border-gray-300 bg-white shadow-sm p-4">
+          <div className="fixed left-4 top-20 w-64 lg:block">
+            <div className="border border-gray-300 bg-white shadow-sm p-4 rounded-lg">
               <p className="text-center text-gray-700 mb-4">
                 The purpose of this app is to interact with the contents of this book in a conversational manner.
               </p>
               <div className="flex justify-center">
                 <a 
-                  href="https://www.amazon.com/Nongenetic-Information-Evolution-Nelson-Cabej/dp/0443221596/ref=sr_1_1?crid=JM096COC9UPX&dib=eyJ2IjoiMSJ9.dAXijoFXs8m0MGh1H_aXlA.6ASiKorhpN2mjYC0Tk9pd__Ca4BRsCA36BDCFiE8IJs&dib_tag=se&keywords=9780443221590&qid=1742075592&sprefix=9780443221590%2Caps%2C301&sr=8-1" 
+                  href="https://www.amazon.com/Nongenetic-Information-Evolution-Nelson-Cabej/dp/0443221596/"
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="inline-block hover:opacity-90 transition-opacity"
