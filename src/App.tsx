@@ -4,6 +4,7 @@ import AuthModal from './components/AuthModal'
 import ConversationList from './components/ConversationList'
 import Captcha from './components/Captcha'
 import { useLocalStorage } from './hooks/useLocalStorage'
+import bookCover from './assets/51gUZLO2yYL._SX342_SY445_.jpg'
 import { 
   saveConversation, 
   getUserConversations, 
@@ -374,18 +375,11 @@ export default function App() {
                 The purpose of this app is to interact with the contents of this book in a conversational manner.
               </p>
               <div className="flex justify-center">
-                <a 
-                  href="https://www.amazon.com/Nongenetic-Information-Evolution-Nelson-Cabej/dp/0443221596/"
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="inline-block hover:opacity-90 transition-opacity"
-                >
-                  <img 
-                    src="/51gUZLO2yYL._SX342_SY445_.jpg" 
-                    alt="Nongenetic Information Book Cover" 
-                    className="w-40 h-auto border border-gray-200 shadow-sm"
-                  />
-                </a>
+                <img 
+                  src={bookCover}
+                  alt="Nongenetic Information Book Cover" 
+                  className="w-40 h-auto border border-gray-200 shadow-sm"
+                />
               </div>
             </div>
           </div>
