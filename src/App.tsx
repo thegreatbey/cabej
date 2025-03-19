@@ -366,9 +366,9 @@ export default function App() {
         )}
   
         {/* Main layout with book info on left and main content centered */}
-        <div className="relative min-h-screen flex">
-          {/* Mobile Amazon link - only shown on small screens */}
-          <div className="lg:hidden w-full text-center mb-4">
+        <div className="relative min-h-screen flex flex-col">
+          {/* Mobile Amazon link - only shown on small screens, centered above title */}
+          <div className="lg:hidden w-full text-center py-4">
             <a 
               href="https://www.amazon.com/Nongenetic-Information-Evolution-Nelson-Cabej/dp/0443221596/"
               target="_blank" 
@@ -379,207 +379,210 @@ export default function App() {
             </a>
           </div>
 
-          {/* Book info box - fixed positioning, only on desktop */}
-          <div className="hidden lg:block w-64 fixed left-[calc(50%-40rem)] top-20">
-            <div className="border border-gray-300 bg-white shadow-sm p-4 rounded-lg">
-              <p className="text-center text-gray-700 mb-4">
-                The purpose of this app is to interact with the contents of this book in a conversational manner.
-              </p>
-              <div className="flex justify-center">
-                <a 
-                  href="https://www.amazon.com/Nongenetic-Information-Evolution-Nelson-Cabej/dp/0443221596/"
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="inline-block hover:opacity-90 transition-opacity"
-                >
-                  <img 
-                    src="https://m.media-amazon.com/images/I/51gUZLO2yYL._SX342_SY445_.jpg"
-                    alt="Nongenetic Information Book Cover" 
-                    className="w-40 h-auto border border-gray-200 shadow-sm"
-                    loading="eager"
-                  />
-                </a>
+          {/* Main content area with book panel and input */}
+          <div className="flex-1 flex">
+            {/* Book info box - fixed positioning, only on desktop */}
+            <div className="hidden lg:block w-64 fixed left-[calc(50%-40rem)] top-20">
+              <div className="border border-gray-300 bg-white shadow-sm p-4 rounded-lg">
+                <p className="text-center text-gray-700 mb-4">
+                  The purpose of this app is to interact with the contents of this book in a conversational manner.
+                </p>
+                <div className="flex justify-center">
+                  <a 
+                    href="https://www.amazon.com/Nongenetic-Information-Evolution-Nelson-Cabej/dp/0443221596/"
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-block hover:opacity-90 transition-opacity"
+                  >
+                    <img 
+                      src="https://m.media-amazon.com/images/I/51gUZLO2yYL._SX342_SY445_.jpg"
+                      alt="Nongenetic Information Book Cover" 
+                      className="w-40 h-auto border border-gray-200 shadow-sm"
+                      loading="eager"
+                    />
+                  </a>
+                </div>
               </div>
             </div>
-          </div>
-          
-          {/* Main content area - centered in page */}
-          <div className="flex-1 flex justify-center">
-            <div className={`w-full max-w-2xl px-4 ${showConversations ? 'lg:mr-[calc(50%-32rem)]' : ''}`}>
-              <div className="flex justify-center">
-                <div className={`${showConversations ? 'w-2/3 pr-4' : 'max-w-2xl w-full'}`}>          
-                  {/* Header with title and auth - now matches width of text field */}
-                  <div className="flex justify-between items-center mb-6">
-                    <h1 className="text-2xl">
-                      Nongenetic Info AI
-                    </h1>
-                    
-                    {user ? (
-                      <div className="flex items-center space-x-2">
-                        <span className="text-sm text-gray-600">
-                          {user.email}
-                        </span>
-                        <button 
-                          onClick={() => {
-                            signOut();
-                            // Reset CAPTCHA state when user signs out
-                            console.log('User signing out - resetting CAPTCHA state');
-                            setCaptchaCompleted(false);
-                            // Force immediate sync to localStorage
-                            setTimeout(syncCaptchaState, 100);
-                            // Also explicitly clear localStorage to be safe
-                            window.localStorage.setItem('captcha-completed', 'false');
-                          }}
-                          className="text-blue-500 hover:text-blue-700"
-                        >
-                          Sign Out
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="flex items-center space-x-4">
-                        <a 
-                          href="#"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            window.location.href = "mailto:hi@cabej.app";
-                          }}
-                          className="text-black hover:underline relative group"
-                        >
-                          hicabejapp
-                          <div className="absolute hidden group-hover:block bg-white border border-gray-200 shadow-md rounded p-2 left-0 mt-1 w-48 text-sm z-10">
-                          <div className="text-black font-bold">Get In Touch</div>
-                          <div className="text-black">{'>'} Suggestions</div>
-                          <div className="text-black">{'>'} Improvements</div>
-                          <div className="text-black">{'>'} Questions</div>
-                          <div className="text-black">{'>'} Just say hi!</div>
-                          </div>
-                        </a>
-                        <button 
-                          onClick={() => setShowAuthModal(true)}
-                          className="text-blue-500 hover:text-blue-700"
-                        >
-                          Sign In
-                        </button>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Conversations button and new conversation button */}
-                  <div className="flex justify-between mb-4">
-                    {conversations.length > 0 && (
-                      <button
-                        onClick={() => setShowConversations(!showConversations)}
-                        className="text-green-500 hover:text-green-700"
-                      >
-                        Conversations
-                      </button>
-                    )}
-                    
-                    {activeConversationId && (
-                      <button
-                        onClick={handleStartNewConversation}
-                        className="text-blue-500 hover:text-blue-700"
-                      >
-                        New Conversation
-                      </button>
-                    )}
-                  </div>
-                  
-                  {/* Active conversation indicator */}
-                  {activeConversationId && (
-                    <div className="mb-4 p-2 bg-blue-50 border border-blue-200 rounded">
-                      <p className="text-sm text-blue-700">
-                        Continuing conversation: 
-                        <span className="font-semibold ml-1">
-                          {activeConversation?.input.substring(0, 30)}
-                          {activeConversation?.input.length && activeConversation.input.length > 30 ? '...' : ''}
-                        </span>
-                      </p>
-                    </div>
-                  )}
-
-                  {/* Conversation history display */}
-                  {conversationHistory.length > 0 && (
-                    <div className="mb-4 border border-gray-200 rounded-lg overflow-y-auto max-h-64">
-                      {conversationHistory.map((msg, index) => (
-                        <div key={index} className={`p-3 ${msg.role === 'user' ? 'bg-gray-100' : 'bg-white'}`}>
-                          <p className="text-xs text-gray-500 mb-1">
-                            {msg.role === 'user' ? 'You' : 'AI'}
-                          </p>
-                          <p>{msg.content}</p>
-                        </div>
-                      ))}
-                      {/* Invisible element at the bottom for automatic scrolling */}
-                      <div ref={conversationEndRef} />
-                    </div>
-                  )}
-
-                  <form onSubmit={handleSubmit}>
-                    <textarea 
-                      value={inputText}
-                      onChange={(e) => setInputText(e.target.value)}
-                      className="w-full h-64 border border-gray-300 p-4 mb-4"
-                      placeholder={activeConversationId 
-                        ? "Continue your conversation..." 
-                        : "Drop in your text here and we'll chat about nongenetic info and the biology secrets it may unlock."}
-                      disabled={isLoading}
-                    />
-                    <div className="flex space-x-2">
-                      {/* Show CAPTCHA for guest users who haven't completed it yet */}
-                      {!user && !captchaCompleted ? (
-                        <div className="w-full">
-                          <Captcha onSuccess={handleCaptchaSuccess} />
+            
+            {/* Main content area - centered in page */}
+            <div className="flex-1 flex justify-center">
+              <div className={`w-full max-w-2xl px-4 ${showConversations ? 'lg:mr-[calc(50%-32rem)]' : ''}`}>
+                <div className="flex justify-center">
+                  <div className={`${showConversations ? 'w-2/3 pr-4' : 'max-w-2xl w-full'}`}>          
+                    {/* Header with title and auth - now matches width of text field */}
+                    <div className="flex justify-between items-center mb-6">
+                      <h1 className="text-2xl">
+                        Nongenetic Info AI
+                      </h1>
+                      
+                      {user ? (
+                        <div className="flex items-center space-x-2">
+                          <span className="text-sm text-gray-600">
+                            {user.email}
+                          </span>
+                          <button 
+                            onClick={() => {
+                              signOut();
+                              // Reset CAPTCHA state when user signs out
+                              console.log('User signing out - resetting CAPTCHA state');
+                              setCaptchaCompleted(false);
+                              // Force immediate sync to localStorage
+                              setTimeout(syncCaptchaState, 100);
+                              // Also explicitly clear localStorage to be safe
+                              window.localStorage.setItem('captcha-completed', 'false');
+                            }}
+                            className="text-blue-500 hover:text-blue-700"
+                          >
+                            Sign Out
+                          </button>
                         </div>
                       ) : (
-                        /* Show Generate button once CAPTCHA is completed or for authenticated users */
-                        <button 
-                          type="submit"
-                          disabled={!inputText.trim() || isLoading}
-                          className={`py-3 text-white ${
-                            inputText.trim() && !isLoading
-                              ? 'bg-blue-500 hover:bg-blue-600 cursor-pointer' 
-                              : 'bg-gray-400 cursor-not-allowed'
-                          } ${showClearButton ? 'w-1/2' : 'w-full'}`}
+                        <div className="flex items-center space-x-4">
+                          <a 
+                            href="#"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              window.location.href = "mailto:hi@cabej.app";
+                            }}
+                            className="text-black hover:underline relative group"
+                          >
+                            hicabejapp
+                            <div className="absolute hidden group-hover:block bg-white border border-gray-200 shadow-md rounded p-2 left-0 mt-1 w-48 text-sm z-10">
+                            <div className="text-black font-bold">Get In Touch</div>
+                            <div className="text-black">{'>'} Suggestions</div>
+                            <div className="text-black">{'>'} Improvements</div>
+                            <div className="text-black">{'>'} Questions</div>
+                            <div className="text-black">{'>'} Just say hi!</div>
+                            </div>
+                          </a>
+                          <button 
+                            onClick={() => setShowAuthModal(true)}
+                            className="text-blue-500 hover:text-blue-700"
+                          >
+                            Sign In
+                          </button>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Conversations button and new conversation button */}
+                    <div className="flex justify-between mb-4">
+                      {conversations.length > 0 && (
+                        <button
+                          onClick={() => setShowConversations(!showConversations)}
+                          className="text-green-500 hover:text-green-700"
                         >
-                          {isLoading ? loadingText : 'Generate'}
+                          Conversations
                         </button>
                       )}
                       
-                      {showClearButton && captchaCompleted && (
-                        <button 
-                          type="button"
-                          onClick={handleClearEverything}
-                          className="w-1/2 py-3 text-white bg-gray-700 hover:bg-gray-800 cursor-pointer"
-                        >
-                          Clear Everything
-                        </button>
-                      )}
-                    </div>
-                  </form>
-                </div>
-
-                {/* Conversations panel - only show if toggled */}
-                {showConversations && (
-                  <div className="w-1/3 pl-4 border-l">
-                    <div className="flex justify-between items-center mb-4">
-                      <h2 className="text-lg font-semibold">Conversations</h2>
-                      {!user && guestConversations.length > 0 && (
+                      {activeConversationId && (
                         <button
-                          onClick={() => setGuestConversations([])}
-                          className="text-red-500 text-sm hover:text-red-700"
+                          onClick={handleStartNewConversation}
+                          className="text-blue-500 hover:text-blue-700"
                         >
-                          Clear All
+                          New Conversation
                         </button>
                       )}
                     </div>
-                    <ConversationList 
-                      conversations={conversations}
-                      onDelete={handleDeleteConversation}
-                      onSelect={handleSelectConversation}
-                      activeConversationId={activeConversationId}
-                    />
+                    
+                    {/* Active conversation indicator */}
+                    {activeConversationId && (
+                      <div className="mb-4 p-2 bg-blue-50 border border-blue-200 rounded">
+                        <p className="text-sm text-blue-700">
+                          Continuing conversation: 
+                          <span className="font-semibold ml-1">
+                            {activeConversation?.input.substring(0, 30)}
+                            {activeConversation?.input.length && activeConversation.input.length > 30 ? '...' : ''}
+                          </span>
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Conversation history display */}
+                    {conversationHistory.length > 0 && (
+                      <div className="mb-4 border border-gray-200 rounded-lg overflow-y-auto max-h-64">
+                        {conversationHistory.map((msg, index) => (
+                          <div key={index} className={`p-3 ${msg.role === 'user' ? 'bg-gray-100' : 'bg-white'}`}>
+                            <p className="text-xs text-gray-500 mb-1">
+                              {msg.role === 'user' ? 'You' : 'AI'}
+                            </p>
+                            <p>{msg.content}</p>
+                          </div>
+                        ))}
+                        {/* Invisible element at the bottom for automatic scrolling */}
+                        <div ref={conversationEndRef} />
+                      </div>
+                    )}
+
+                    <form onSubmit={handleSubmit}>
+                      <textarea 
+                        value={inputText}
+                        onChange={(e) => setInputText(e.target.value)}
+                        className="w-full h-64 border border-gray-300 p-4 mb-4"
+                        placeholder={activeConversationId 
+                          ? "Continue your conversation..." 
+                          : "Drop in your text here and we'll chat about nongenetic info and the biology secrets it may unlock."}
+                        disabled={isLoading}
+                      />
+                      <div className="flex space-x-2">
+                        {/* Show CAPTCHA for guest users who haven't completed it yet */}
+                        {!user && !captchaCompleted ? (
+                          <div className="w-full">
+                            <Captcha onSuccess={handleCaptchaSuccess} />
+                          </div>
+                        ) : (
+                          /* Show Generate button once CAPTCHA is completed or for authenticated users */
+                          <button 
+                            type="submit"
+                            disabled={!inputText.trim() || isLoading}
+                            className={`py-3 text-white ${
+                              inputText.trim() && !isLoading
+                                ? 'bg-blue-500 hover:bg-blue-600 cursor-pointer' 
+                                : 'bg-gray-400 cursor-not-allowed'
+                            } ${showClearButton ? 'w-1/2' : 'w-full'}`}
+                          >
+                            {isLoading ? loadingText : 'Generate'}
+                          </button>
+                        )}
+                        
+                        {showClearButton && captchaCompleted && (
+                          <button 
+                            type="button"
+                            onClick={handleClearEverything}
+                            className="w-1/2 py-3 text-white bg-gray-700 hover:bg-gray-800 cursor-pointer"
+                          >
+                            Clear Everything
+                          </button>
+                        )}
+                      </div>
+                    </form>
                   </div>
-                )}
+
+                  {/* Conversations panel - only show if toggled */}
+                  {showConversations && (
+                    <div className="w-1/3 pl-4 border-l">
+                      <div className="flex justify-between items-center mb-4">
+                        <h2 className="text-lg font-semibold">Conversations</h2>
+                        {!user && guestConversations.length > 0 && (
+                          <button
+                            onClick={() => setGuestConversations([])}
+                            className="text-red-500 text-sm hover:text-red-700"
+                          >
+                            Clear All
+                          </button>
+                        )}
+                      </div>
+                      <ConversationList 
+                        conversations={conversations}
+                        onDelete={handleDeleteConversation}
+                        onSelect={handleSelectConversation}
+                        activeConversationId={activeConversationId}
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
