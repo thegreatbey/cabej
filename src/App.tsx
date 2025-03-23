@@ -3,6 +3,7 @@ import { useAuth } from './contexts/AuthContext'
 import AuthModal from './components/AuthModal'
 import ConversationList from './components/ConversationList'
 import Captcha from './components/Captcha'
+import Footer from './components/Footer'
 import { useLocalStorage } from './hooks/useLocalStorage'
 import { 
   saveConversation, 
@@ -351,7 +352,7 @@ export default function App() {
 
   return (
     <div className="bg-gray-100 min-h-screen w-full">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-4">
         {/* Error message */}
         {showError && error && (
           <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded z-50 shadow-md">
@@ -366,7 +367,7 @@ export default function App() {
         )}
   
         {/* Main layout with book info on left and main content centered */}
-        <div className="relative min-h-screen flex flex-col">
+        <div className="relative min-h-[calc(100vh-2rem)] flex flex-col">
           {/* Mobile Amazon link - only shown on small screens, centered above title */}
           <div className="lg:hidden w-full text-center py-4">
             <a 
@@ -586,6 +587,9 @@ export default function App() {
               </div>
             </div>
           </div>
+
+          {/* Footer */}
+          <Footer className="mt-4" />
         </div>
 
         {/* Auth Modal */}
