@@ -408,7 +408,7 @@ export default function App() {
           <div className="flex-1 flex flex-col lg:flex-row
                          landscape:flex-row landscape:h-[calc(100vh-env(safe-area-inset-top)-env(safe-area-inset-bottom))]">
             {/* Book info box - responsive positioning */}
-            <div className="hidden lg:block lg:w-64 lg:fixed lg:left-[calc(50%-40rem)] lg:top-20">
+            <div className="hidden lg:block lg:w-64 lg:fixed lg:left-[calc(50%-40rem)] lg:top-[calc(8rem+env(safe-area-inset-top))] lg:pt-4">
               <div className="border border-gray-300 bg-white shadow-sm p-4 rounded-lg">
                 <p className="text-center text-gray-700 mb-4">
                   The purpose of this app is to interact with the contents of this book in a conversational manner.
@@ -566,7 +566,7 @@ export default function App() {
                     <div className="space-y-3 sm:space-y-0 sm:flex sm:space-x-2
                                   landscape:flex landscape:space-x-2 landscape:space-y-0">
                       {!user && !captchaCompleted ? (
-                        <div className="w-full landscape:max-w-md">
+                        <div className="w-full max-w-md mx-auto">
                           <Captcha onSuccess={handleCaptchaSuccess} />
                         </div>
                       ) : (
