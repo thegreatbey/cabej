@@ -21,23 +21,34 @@ import { User } from 'firebase/auth'
 export interface Message {
   role: 'user' | 'assistant'
   content: string
-  timestamp?: Timestamp | FieldValue | Date | null
+  timestamp?: Timestamp | Date | null
 }
 
-// Define conversation type
-export interface Conversation {
-  id?: string
+// Define base conversation type without ID
+interface BaseConversation {
   input: string
   response: string
   createdAt: Timestamp | FieldValue | null
   userId?: string | null
-  userType: 'guest' | 'auth'  // New field to indicate if user is guest or authenticated
-  userEmail?: string | null   // New field to store email for authenticated users
-  history?: Message[] // Add history field for tracking conversation context
+  userType: 'guest' | 'auth'
+  userEmail?: string | null
+  history?: Message[]
+}
+
+// Define full conversation type with required ID
+export interface Conversation extends BaseConversation {
+  id: string
 }
 
 // Collection reference
 const conversationsCollection = collection(db, 'conversations')
+
+// Helper function to create a message with server timestamp
+const createMessage = (role: 'user' | 'assistant', content: string): Message => ({
+  role,
+  content,
+  timestamp: null // Will be replaced with server timestamp
+})
 
 /**
  * Save a conversation to Firestore for authenticated users
@@ -51,36 +62,36 @@ export const saveConversation = async (
 ): Promise<Conversation> => {
   // Create new messages for this exchange
   const newMessages: Message[] = [
-    { role: 'user', content: input, timestamp: serverTimestamp() },
-    { role: 'assistant', content: response, timestamp: serverTimestamp() }
+    createMessage('user', input),
+    createMessage('assistant', response)
   ]
   
   // Combine with existing history
   const updatedHistory = [...history, ...newMessages]
   
-  const conversation: Conversation = {
+  const baseConversation: BaseConversation = {
     input,
     response,
     createdAt: serverTimestamp(),
     userId: user?.uid || null,
-    userType: user ? 'auth' : 'guest',          // Add userType field
-    userEmail: user ? user.email : null,        // Add userEmail field
+    userType: user ? 'auth' : 'guest',
+    userEmail: user?.email || null,
     history: updatedHistory
   }
 
   // For authenticated users, save to Firestore
   if (user) {
     try {
-      const docRef = await addDoc(conversationsCollection, conversation)
-      return { ...conversation, id: docRef.id }
+      const docRef = await addDoc(conversationsCollection, baseConversation)
+      return { ...baseConversation, id: docRef.id }
     } catch (error) {
       console.error('Error saving conversation:', error)
       throw new Error('Failed to save conversation')
     }
   }
 
-  // For guest users, just return the conversation (will be stored in local state)
-  return conversation
+  // For guest users, generate a temporary ID
+  return { ...baseConversation, id: `guest-${Date.now()}` }
 }
 
 /**
@@ -96,14 +107,14 @@ export const updateConversationHistory = async (
     
     // Add new messages to history
     const newMessages: Message[] = [
-      { role: 'user', content: input, timestamp: serverTimestamp() },
-      { role: 'assistant', content: response, timestamp: serverTimestamp() }
+      createMessage('user', input),
+      createMessage('assistant', response)
     ]
     
     await updateDoc(conversationRef, {
       history: arrayUnion(...newMessages),
-      input, // Update the most recent input
-      response // Update the most recent response
+      input,
+      response
     })
   } catch (error) {
     console.error('Error updating conversation history:', error)
@@ -189,4 +200,12 @@ export const transferGuestConversations = async (
     console.error('Error transferring conversations:', error)
     throw new Error('Failed to transfer conversations')
   }
+}
+
+// Helper function to convert Firestore timestamp to Date
+export const convertTimestamp = (timestamp: Timestamp | FieldValue | null): Date | undefined => {
+  if (timestamp instanceof Timestamp) {
+    return timestamp.toDate()
+  }
+  return undefined
 } 
