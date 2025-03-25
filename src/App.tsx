@@ -408,7 +408,7 @@ export default function App() {
           <div className="flex-1 flex flex-col lg:flex-row
                          landscape:flex-row landscape:h-[calc(100vh-env(safe-area-inset-top)-env(safe-area-inset-bottom))]">
             {/* Book info box - responsive positioning */}
-            <div className="hidden lg:block lg:w-64 lg:fixed lg:left-[calc(50%-40rem)] lg:top-[calc(8rem+env(safe-area-inset-top))] lg:pt-4">
+            <div className="hidden lg:block lg:w-64 lg:sticky lg:top-4">
               <div className="border border-gray-300 bg-white shadow-sm p-4 rounded-lg">
                 <p className="text-center text-gray-700 mb-4">
                   The purpose of this app is to interact with the contents of this book in a conversational manner.
@@ -671,8 +671,8 @@ export default function App() {
             </div>
           </div>
 
-          {/* Footer - adjusted for safe area */}
-          <Footer className="mt-4 block 
+          {/* Footer - adjusted for safe area and centered */}
+          <Footer className="mt-4 text-center w-full 
                             pb-[env(safe-area-inset-bottom)]" />
         </div>
 
