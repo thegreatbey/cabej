@@ -363,7 +363,7 @@ export default function App() {
 
   return (
     <div className="bg-gray-100 min-h-screen w-full">
-      <div className="container mx-auto px-4 py-4 pb-20 lg:pb-4
+      <div className="container mx-auto px-4 py-4 pb-20 lg:pb-4 lg:pt-12
                       pt-[env(safe-area-inset-top)]
                       pb-[env(safe-area-inset-bottom)]
                       pl-[env(safe-area-inset-left)]
@@ -438,7 +438,7 @@ export default function App() {
               <div className="flex flex-col lg:flex-row">
                 <div className={`w-full ${showConversations ? 'lg:w-2/3 lg:pr-4' : ''}`}>          
                   {/* Header with responsive layout */}
-                  <div className="flex flex-col sm:flex-row justify-between items-center mb-4 sm:mb-6 space-y-2 sm:space-y-0">
+                  <div className="flex flex-col sm:flex-row justify-between items-center mb-4 sm:mb-6 lg:mb-8 space-y-2 sm:space-y-0 mt-2 lg:mt-4">
                     <h1 className="text-xl sm:text-2xl font-semibold">
                       Nongenetic Info AI
                     </h1>
