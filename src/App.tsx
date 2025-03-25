@@ -507,7 +507,7 @@ export default function App() {
                       {activeConversationId && (
                         <button
                           onClick={handleStartNewConversation}
-                          className="flex items-center space-x-1 text-blue-500 hover:text-blue-700 px-3 py-2 rounded-md hover:bg-blue-50"
+                          className="hidden lg:flex items-center space-x-1 text-blue-500 hover:text-blue-700 px-3 py-2 rounded-md hover:bg-blue-50"
                         >
                           <span>New Chat</span>
                         </button>
@@ -672,7 +672,7 @@ export default function App() {
           </div>
 
           {/* Footer - adjusted for safe area */}
-          <Footer className="mt-4 hidden lg:block 
+          <Footer className="mt-4 block 
                             pb-[env(safe-area-inset-bottom)]" />
         </div>
 
@@ -680,10 +680,7 @@ export default function App() {
         <BottomNavigation
           showConversations={showConversations}
           onToggleConversations={() => setShowConversations(!showConversations)}
-          onNewChat={handleStartNewConversation}
           hasConversations={conversations.length > 0}
-          isAuthenticated={!!user}
-          onAuthClick={() => user ? signOut() : setShowAuthModal(true)}
           className="pb-[env(safe-area-inset-bottom)]"
         />
 
