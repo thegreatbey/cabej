@@ -133,7 +133,7 @@ export default function Captcha({ onSuccess }: CaptchaProps) {
             maxLength={1}
             className={`w-16 h-16 text-center text-2xl border ${
               isError ? 'border-red-500' : 'border-gray-300'
-            } rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4 touch-manipulation`}
+            } rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4 touch-manipulation bg-white text-gray-900`}
             placeholder="_"
             autoFocus
             aria-label="Enter the missing letter"

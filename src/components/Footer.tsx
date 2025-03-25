@@ -49,31 +49,31 @@ export default function Footer({ className = '' }: FooterProps) {
   );
 
   return (
-    <footer className={`w-full py-2 text-center ${className}`}>
-      <div className="relative">
-        <div className="flex justify-center items-center space-x-2 text-sm text-gray-600">
+    <footer className={`w-full py-4 sm:py-6 mt-auto text-center pb-[calc(4rem+env(safe-area-inset-bottom))] lg:pb-6 ${className}`}>
+      <div className="relative max-w-full px-4">
+        <div className="flex justify-center items-center space-x-2 text-sm text-gray-600 flex-wrap">
           <button
             onClick={() => setActivePanel(activePanel === 'tos' ? null : 'tos')}
-            className="text-black hover:underline"
+            className="text-black hover:underline py-2"
           >
             TOS
           </button>
           <span>•</span>
           <button
             onClick={() => setActivePanel(activePanel === 'privacy' ? null : 'privacy')}
-            className="text-black hover:underline"
+            className="text-black hover:underline py-2"
           >
             Privacy Policy
           </button>
           <span>•</span>
-          <span>(C) Dr. Nelson R. Cabej / CABEJ.APP 2025-</span>
+          <span className="py-2">(C) Dr. Nelson R. Cabej / CABEJ.APP 2025-</span>
         </div>
         
         {/* Expandable panels */}
         {(activePanel === 'tos' || activePanel === 'privacy') && (
           <div 
             ref={panelRef}
-            className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-96 max-h-96 overflow-y-auto bg-white border border-gray-200 rounded-lg shadow-lg p-4"
+            className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-[calc(100vw-2rem)] max-w-md max-h-[60vh] overflow-y-auto bg-white border border-gray-200 rounded-lg shadow-lg p-4 mx-auto"
           >
             {activePanel === 'tos' ? tosContent : privacyContent}
           </div>
