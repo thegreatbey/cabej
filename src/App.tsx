@@ -566,7 +566,7 @@ export default function App() {
                     <div className="space-y-3 sm:space-y-0 sm:flex sm:space-x-2
                                   landscape:flex landscape:space-x-2 landscape:space-y-0">
                       {!user && !captchaCompleted ? (
-                        <div className="w-full max-w-md mx-auto">
+                        <div className="w-full sm:flex-1">
                           <Captcha onSuccess={handleCaptchaSuccess} />
                         </div>
                       ) : (
