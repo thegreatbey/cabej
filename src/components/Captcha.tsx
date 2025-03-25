@@ -114,12 +114,15 @@ export default function Captcha({ onSuccess }: CaptchaProps) {
 
   return (
     <div className="w-full">
-      <div className="bg-white p-4 rounded-lg shadow-md">
-        <h3 className="text-center text-lg font-medium mb-3">Human Verification</h3>
+      <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md">
+        <h3 className="text-center text-base sm:text-lg font-medium mb-4">Human Verification</h3>
         
-        <p className="text-center mb-4">
-          Type the missing letter: <span className="font-bold text-lg">{challengeText}</span>
-        </p>
+        <div className="text-center mb-6">
+          <p className="text-sm sm:text-base mb-2">Type the missing letter:</p>
+          <span className="inline-block font-mono text-xl sm:text-2xl bg-gray-50 px-4 py-2 rounded">
+            {challengeText}
+          </span>
+        </div>
         
         <div className="flex flex-col items-center">
           <input
@@ -128,23 +131,28 @@ export default function Captcha({ onSuccess }: CaptchaProps) {
             onChange={handleInputChange}
             onKeyDown={handleKeyPress}
             maxLength={1}
-            className={`w-12 h-12 text-center text-xl border ${
+            className={`w-16 h-16 text-center text-2xl border ${
               isError ? 'border-red-500' : 'border-gray-300'
-            } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4`}
+            } rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4 touch-manipulation`}
             placeholder="_"
             autoFocus
             aria-label="Enter the missing letter"
+            style={{ fontSize: '24px' }}
           />
           
           {isError && (
-            <p className="text-red-500 mb-3">
+            <p className="text-red-500 text-sm sm:text-base mb-4">
               Incorrect letter. Please try again.
             </p>
           )}
           
           <button
             onClick={handleSubmit}
-            className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition-colors"
+            className={`w-full sm:w-auto min-w-[120px] py-3 px-6 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+              userInput
+                ? 'bg-blue-500 hover:bg-blue-600 text-white focus:ring-blue-500'
+                : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+            }`}
             disabled={!userInput}
           >
             Verify
