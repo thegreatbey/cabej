@@ -307,6 +307,18 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-gray-100 overflow-hidden flex flex-col">
+      {/* Amazon book link - mobile only */}
+      <div className="block sm:hidden bg-blue-50 py-2 text-center text-sm">
+        <a 
+          href="https://www.amazon.com/Nongenetic-Information-Evolution-Nelson-Cabej/dp/0443221596/ref=sr_1_1?crid=12XKPBSYQ2YGF&dib=eyJ2IjoiMSJ9.BRZNz9Fa73gW99e16WqyBijGm3rsqacSDwAGkqFYOZA.L7q3tG2yDQmDqsYo5n122E_4L34xIJPJn-jNfvMq8ng&dib_tag=se&keywords=nongenetic+information+and+evolution&qid=1743992134&sprefix=nongenetic+information+and+evolution%2Caps%2C58&sr=8-1"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 hover:underline"
+        >
+          Nongenetic Information and Evolution is on Amazon
+        </a>
+      </div>
+      
       <div className="max-w-2xl mx-auto px-4 w-full flex-1 flex flex-col">
         <div className="flex-1 flex flex-col">
           {/* Error message - adjusted for notched devices */}
