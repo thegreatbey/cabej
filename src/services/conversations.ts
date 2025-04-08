@@ -12,16 +12,19 @@ import {
   FieldValue,
   updateDoc,
   arrayUnion,
-  getDoc
+  getDoc,
+  limit
 } from 'firebase/firestore'
 import { db } from '../firebase'
 import { User } from 'firebase/auth'
 
 // Define message type for conversation history
 export interface Message {
-  role: 'user' | 'assistant'
+  id: string
   content: string
-  timestamp?: Timestamp | Date | null
+  role: 'user' | 'assistant'
+  timestamp: number
+  feedback?: 'helpful' | 'notHelpful' | null
 }
 
 // Define base conversation type without ID
@@ -45,9 +48,10 @@ const conversationsCollection = collection(db, 'conversations')
 
 // Helper function to create a message with server timestamp
 const createMessage = (role: 'user' | 'assistant', content: string): Message => ({
+  id: `${role}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
   role,
   content,
-  timestamp: null // Will be replaced with server timestamp
+  timestamp: Date.now()
 })
 
 /**
@@ -208,4 +212,115 @@ export const convertTimestamp = (timestamp: Timestamp | FieldValue | null): Date
     return timestamp.toDate()
   }
   return undefined
+}
+
+// Function to get guest conversations from session storage
+export function getGuestConversations(): Conversation[] {
+  try {
+    const storedConversations = sessionStorage.getItem('guestConversations')
+    if (storedConversations) {
+      return JSON.parse(storedConversations)
+    }
+  } catch (error) {
+    console.error('Error getting guest conversations:', error)
+  }
+  return []
+}
+
+// Add new function to record user feedback on responses
+export async function recordResponseFeedback(
+  userId: string | null,
+  messageId: string,
+  feedback: 'helpful' | 'notHelpful' | null
+): Promise<boolean> {
+  try {
+    // For guest users, update session storage
+    if (!userId) {
+      const guestConversations = getGuestConversations()
+      
+      // Find all conversations with this message
+      let updated = false
+      const updatedConversations = guestConversations.map((conv: Conversation) => {
+        const updatedMessages = conv.history?.map((msg: Message) => {
+          if (msg.id === messageId) {
+            updated = true
+            return { ...msg, feedback }
+          }
+          return msg
+        }) || []
+        
+        return {
+          ...conv,
+          history: updatedMessages
+        }
+      })
+      
+      if (updated) {
+        sessionStorage.setItem('guestConversations', JSON.stringify(updatedConversations))
+        return true
+      }
+      
+      return false
+    }
+    
+    // For authenticated users, update Firestore
+    const messageRef = doc(db, 'users', userId, 'messages', messageId)
+    await updateDoc(messageRef, { feedback })
+    
+    return true
+  } catch (error) {
+    console.error('Error recording feedback:', error)
+    return false
+  }
+}
+
+// Add function to get personalized context based on user's feedback history
+export async function getPersonalizedContext(userId: string | null): Promise<string> {
+  try {
+    // For guest users, analyze session storage
+    if (!userId) {
+      const guestConversations = getGuestConversations()
+      // Collect all messages with positive feedback
+      const helpfulMessages = guestConversations.flatMap((conv: Conversation) => 
+        conv.history?.filter((msg: Message) => msg.feedback === 'helpful') || []
+      )
+      
+      if (helpfulMessages.length === 0) {
+        return ''
+      }
+      
+      // Extract recent helpful message contents
+      const recentHelpful = helpfulMessages
+        .sort((a: Message, b: Message) => b.timestamp - a.timestamp)
+        .slice(0, 3)
+        .map((msg: Message) => msg.content)
+        .join('\n\n')
+      
+      return `Based on your previous positive interactions, these topics were helpful to you:\n${recentHelpful}`
+    }
+    
+    // For authenticated users, query Firestore
+    const messagesRef = collection(db, 'users', userId, 'messages')
+    const helpfulQuery = query(
+      messagesRef, 
+      where('feedback', '==', 'helpful'),
+      orderBy('timestamp', 'desc'),
+      limit(5)
+    )
+    
+    const helpfulSnapshot = await getDocs(helpfulQuery)
+    if (helpfulSnapshot.empty) {
+      return ''
+    }
+    
+    const helpfulMessages = helpfulSnapshot.docs.map(doc => doc.data() as Message)
+    const recentHelpful = helpfulMessages
+      .map(msg => msg.content)
+      .join('\n\n')
+    
+    return `Based on your previous positive interactions, these topics were helpful to you:\n${recentHelpful}`
+  } catch (error) {
+    console.error('Error getting personalized context:', error)
+    return ''
+  }
 } 
